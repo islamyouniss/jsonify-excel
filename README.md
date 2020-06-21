@@ -180,7 +180,7 @@ readXlsxFile(file, {
   schema,
   transformData(data) {
     // Adds header row to the data.
-    return ['ID', 'NAME', ...].concat(data)
+    return [['ID', 'NAME', ...]].concat(data)
     // Removes empty rows.
     return data.filter(row => row.filter(column => column !== null).length > 0)
   }
