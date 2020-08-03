@@ -2,11 +2,15 @@
 
 Read small to medium `*.xlsx` files in a browser or Node.js. Parse to JSON with a strict schema.
 
-[Demo](https://catamphetamine.github.io/read-excel-file/)
+[Demo](https://catamphetamine.gitlab.io/read-excel-file/)
 
 ## Restrictions
 
 There have been some [complaints](https://github.com/catamphetamine/read-excel-file/issues/38#issuecomment-544286628) about this library not being able to handle large `*.xlsx` spreadsheets. It's true that this library's main point have been usability and convenience, and not performance or the ability to handle huge datasets. For example, the time of parsing a 2000 rows / 20 columns file is about 3 seconds, and when parsing a 30k+ rows file, it may throw a `RangeError: Maximum call stack size exceeded`. So, for handling huge datasets, use something like [`xlsx`](https://github.com/catamphetamine/read-excel-file/issues/38#issuecomment-544286628) package instead. This library is suitable for handling small to medium `*.xlsx` files.
+
+## GitHub
+
+On March 9th, 2020, GitHub, Inc. silently [banned](https://medium.com/@catamphetamine/how-github-blocked-me-and-all-my-libraries-c32c61f061d3) my account (and all my libraries) without any notice. I opened a support ticked but they didn't answer. Because of that, I had to move all my libraries to [GitLab](https://gitlab.com/catamphetamine).
 
 ## Install
 
