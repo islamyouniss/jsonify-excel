@@ -137,6 +137,7 @@ readXlsxFile(file, { schema }).then(({ rows, errors }) => {
       title: 'Chemistry'
     },
     contact: '+11234567890',
+    status: 'SCHEDULED'
   }]
 })
 ```
@@ -190,6 +191,10 @@ readXlsxFile(file, {
   }
 })
 ```
+
+## TypeScript
+
+See [testing `index.d.ts`](https://github.com/catamphetamine/read-excel-file/issues/71#issuecomment-675140448).
 
 ## Browser compatibility
 
