@@ -1,3 +1,14 @@
+<!--
+5.0.0 / 30.08.2020
+==================
+
+  * Added [TypeScript](https://github.com/catamphetamine/read-excel-file/issues/71) definitions.
+
+  * Removed deprecated `URL`, `Integer` and `Email` exports (use the string variants instead: `"URL"`, `"Integer"`, `"Email"`).
+
+  * Removed undocumented `convertToJson()` export.
+-->
+
 4.0.0 / 25.05.2019
 ==================
 

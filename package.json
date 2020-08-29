@@ -5,6 +5,7 @@
   "module": "index.js",
   "sideEffects": false,
   "main": "index.commonjs.js",
+  "types.test": "./index.d.ts.test",
   "contributors": [
     {
       "name": "Trevor Dixon",
