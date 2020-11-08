@@ -9,6 +9,11 @@
   * Removed undocumented `convertToJson()` export.
 -->
 
+4.0.8 / 08.11.2020
+==================
+
+* Updated `JSZip` to the latest version. The [issue](https://gitlab.com/catamphetamine/read-excel-file/-/issues/8). The [original issue](https://github.com/catamphetamine/read-excel-file/issues/54).
+
 4.0.0 / 25.05.2019
 ==================
 
