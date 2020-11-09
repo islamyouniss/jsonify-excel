@@ -9,6 +9,13 @@
   * Removed undocumented `convertToJson()` export.
 -->
 
+4.1.0 / 09.11.2020
+==================
+
+* Renamed schema entry `parse()` function: now it's called `type`. This way, `type` could be both a built-in type and a custom type.
+
+* Changed the built-in `"Integer"`, `"URL"` and `"Email"` types: now they're exported functions again instead of strings. Strings still work.
+
 4.0.8 / 08.11.2020
 ==================
 

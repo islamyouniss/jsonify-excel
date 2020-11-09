@@ -110,7 +110,7 @@ const schema = {
   'CONTACT': {
     prop: 'contact',
     required: true,
-    parse(value) {
+    type: (value) => {
       const number = parsePhoneNumber(value)
       if (!number) {
         throw new Error('invalid')
@@ -148,24 +148,26 @@ readXlsxFile(file, { schema }).then(({ rows, errors }) => {
 
 There are also some additional exported `type`s:
 
-* `"Integer"` for parsing integer `Number`s.
-* `"URL"` for parsing URLs.
-* `"Email"` for parsing email addresses.
+* `Integer` for parsing integer `Number`s.
+* `URL` for parsing URLs.
+* `Email` for parsing email addresses.
 
-A schema entry for a column can also have a `validate(value)` function for validating the parsed value. It must `throw` an `Error` if the value is invalid.
+A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid.
 
-A React component for displaying error info could look like this:
+#### Displaying errors
+
+A React component for displaying errors could look like this:
 
 ```js
 import { parseExcelDate } from 'read-excel-file'
 
 function ParseExcelError({ children: error }) {
-  // Human-readable value.
+  // Get a human-readable value.
   let value = error.value
   if (error.type === Date) {
     value = parseExcelDate(value).toString()
   }
-  // Error summary.
+  // Render error summary.
   return (
     <div>
       <code>"{error.error}"</code>
@@ -181,6 +183,8 @@ function ParseExcelError({ children: error }) {
   )
 }
 ```
+
+#### Transforming rows/columns before schema is applied
 
 When using a `schema` there's also an optional `transformData(data)` parameter which can be used for the cases when the spreadsheet rows/columns aren't in the correct format. For example, the heading row may be missing, or there may be some purely presentational or empty rows. Example:
 

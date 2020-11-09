@@ -169,11 +169,11 @@ export function parseValue(value, schemaEntry, options) {
  */
 function parseCustomValue(value, parse) {
   try {
-    let parsed = parse(value)
-    if (parsed === undefined) {
+    value = parse(value)
+    if (value === undefined) {
       return { value: null }
     }
-    return { value: parsed }
+    return { value }
   } catch (error) {
     return { error: error.message }
   }
@@ -251,6 +251,9 @@ function parseValueOfType(value, type, options) {
       return { error: 'invalid' }
 
     default:
+      if (typeof type === 'function') {
+        return parseCustomValue(value, type)
+      }
       throw new Error(`Unknown schema type: ${type && type.name || type}`)
   }
 }

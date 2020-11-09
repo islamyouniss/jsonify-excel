@@ -1,6 +1,10 @@
 // See the discussion:
 // https://github.com/catamphetamine/read-excel-file/issues/71
 
+export function Integer(): void;
+export function URL(): void;
+export function Email(): void;
+
 type BasicType =
 	| string
 	| number
@@ -9,10 +13,15 @@ type BasicType =
 	| 'Integer'
 	| 'URL'
 	| 'Email'
+	| Integer
+	| URL
+	| Email
+
+export type Type = <T>(value: Cell) => T?;
 
 interface SchemaEntryBasic {
 	prop: string;
-	type: BasicType;
+	type: BasicType | Type;
 	oneOf?<T>: T[];
 	required?: boolean;
 	validate?<T>(value: T): void;
@@ -20,7 +29,7 @@ interface SchemaEntryBasic {
 
 interface SchemaEntryParsed {
 	prop: string;
-	parse<T>: (value: string) => T?;
+	parse<T>: (value: Cell) => T?;
 	oneOf?<T>: T[];
 	required?: boolean;
 	validate?<T>(value: T): void;
