@@ -62,6 +62,7 @@ describe('convertToJson', () => {
 
 		errors.should.deep.equal([])
 
+		// Convert `Date` to `String` for equality check.
 		rows[0].date = rows[0].date.toISOString()
 
 		rows.should.deep.equal([{
@@ -69,6 +70,47 @@ describe('convertToJson', () => {
 			number: 123,
 			phone: '+11234567890',
 			phoneType: '+11234567890',
+			boolean: true,
+			string: 'abc'
+		}])
+	})
+
+	it('should support schema entries with no `type`s', () => {
+		const { rows, errors } = convertToJson([
+			[
+				'DATE',
+				'NUMBER',
+				'BOOLEAN',
+				'STRING'
+			], [
+				new Date(Date.parse('03/24/2018') - new Date().getTimezoneOffset() * 60 * 1000 + 12 * 60 * 60 * 1000), // '43183', // '03/24/2018',
+				123,
+				true,
+				'abc'
+			]
+		], {
+			DATE: {
+				prop: 'date'
+			},
+			NUMBER: {
+				prop: 'number'
+			},
+			BOOLEAN: {
+				prop: 'boolean'
+			},
+			STRING: {
+				prop: 'string'
+			}
+		})
+
+		errors.should.deep.equal([])
+
+		// Convert `Date` to `String` for equality check.
+		rows[0].date = rows[0].date.toISOString()
+
+		rows.should.deep.equal([{
+			date: date.toISOString(),
+			number: 123,
 			boolean: true,
 			string: 'abc'
 		}])

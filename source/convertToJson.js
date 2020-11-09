@@ -140,7 +140,8 @@ export function parseValue(value, schemaEntry, options) {
   } else if (schemaEntry.type) {
     result = parseValueOfType(value, Array.isArray(schemaEntry.type) ? schemaEntry.type[0] : schemaEntry.type, options)
   } else {
-    throw new Error('Invalid schema entry: no .type and no .parse():\n\n' + JSON.stringify(schemaEntry, null, 2))
+    result = { value: value }
+    // throw new Error('Invalid schema entry: no .type and no .parse():\n\n' + JSON.stringify(schemaEntry, null, 2))
   }
   // If errored then return the error.
   if (result.error) {

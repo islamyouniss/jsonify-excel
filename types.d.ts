@@ -21,7 +21,7 @@ export type Type = <T>(value: Cell) => T?;
 
 interface SchemaEntryBasic {
 	prop: string;
-	type: BasicType | Type;
+	type?: BasicType | Type;
 	oneOf?<T>: T[];
 	required?: boolean;
 	validate?<T>(value: T): void;
@@ -65,6 +65,12 @@ export interface ParsedObjectsResult {
 
 export interface ParseWithSchemaOptions {
 	schema: Schema;
+	transformData?: (rows: Row[]) => Row[];
+	sheet?: number | string;
+}
+
+export interface ParseWithMapOptions {
+	map: object;
 	transformData?: (rows: Row[]) => Row[];
 	sheet?: number | string;
 }

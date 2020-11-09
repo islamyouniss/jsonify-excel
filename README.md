@@ -146,6 +146,8 @@ readXlsxFile(file, { schema }).then(({ rows, errors }) => {
 })
 ```
 
+If no `type` is specified then the cell value is returned "as is".
+
 There are also some additional exported `type`s:
 
 * `Integer` for parsing integer `Number`s.
@@ -154,9 +156,48 @@ There are also some additional exported `type`s:
 
 A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid.
 
-#### Displaying errors
+#### Map
 
-A React component for displaying errors could look like this:
+Sometimes, a developer might want to use some other (more advanced) solution for schema parsing and validation (like [`yup`](https://github.com/jquense/yup)). If a developer passes a `map` instead of a `schema` to `readXlsxFile()`, then it would just map each data row to a JSON object without doing any parsing or validation.
+
+```js
+// An example *.xlsx document:
+// -----------------------------------------------------------------------------------------
+// | START DATE | NUMBER OF STUDENTS | IS FREE | COURSE TITLE |    CONTACT     |  STATUS   |
+// -----------------------------------------------------------------------------------------
+// | 03/24/2018 |         123        |   true  |  Chemistry   | (123) 456-7890 | SCHEDULED |
+// -----------------------------------------------------------------------------------------
+
+const map = {
+  'START DATE': 'date',
+  'NUMBER OF STUDENTS': 'numberOfStudents',
+  'COURSE': {
+    'course': {
+      'IS FREE': 'isFree',
+      'COURSE TITLE': 'title'
+    }
+  },
+  'CONTACT': 'contact',
+  'STATUS': 'status'
+}
+
+readXlsxFile(file, { map }).then(({ rows }) => {
+  rows === [{
+    date: new Date(2018, 2, 24),
+    numberOfStudents: 123,
+    course: {
+      isFree: true,
+      title: 'Chemistry'
+    },
+    contact: '(123) 456-7890',
+    status: 'SCHEDULED'
+  }]
+})
+```
+
+#### Displaying schema errors
+
+A React component for displaying schema parsing/validation errors could look like this:
 
 ```js
 import { parseExcelDate } from 'read-excel-file'
