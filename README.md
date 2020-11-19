@@ -73,7 +73,7 @@ To convert rows to JSON pass `schema` option to `readXlsxFile()`. It will return
 // -----------------------------------------------------------------------------------------
 // | START DATE | NUMBER OF STUDENTS | IS FREE | COURSE TITLE |    CONTACT     |  STATUS   |
 // -----------------------------------------------------------------------------------------
-// | 03/24/2018 |         123        |   true  |  Chemistry   | (123) 456-7890 | SCHEDULED |
+// | 03/24/2018 |         10         |   true  |  Chemistry   | (123) 456-7890 | SCHEDULED |
 // -----------------------------------------------------------------------------------------
 
 const schema = {
@@ -135,7 +135,7 @@ readXlsxFile(file, { schema }).then(({ rows, errors }) => {
 
   rows === [{
     date: new Date(2018, 2, 24),
-    numberOfStudents: 123,
+    numberOfStudents: 10,
     course: {
       isFree: true,
       title: 'Chemistry'
@@ -162,11 +162,11 @@ Sometimes, a developer might want to use some other (more advanced) solution for
 
 ```js
 // An example *.xlsx document:
-// -----------------------------------------------------------------------------------------
-// | START DATE | NUMBER OF STUDENTS | IS FREE | COURSE TITLE |    CONTACT     |  STATUS   |
-// -----------------------------------------------------------------------------------------
-// | 03/24/2018 |         123        |   true  |  Chemistry   | (123) 456-7890 | SCHEDULED |
-// -----------------------------------------------------------------------------------------
+// ------------------------------------------------------------
+// | START DATE | NUMBER OF STUDENTS | IS FREE | COURSE TITLE |
+// ------------------------------------------------------------
+// | 03/24/2018 |         10         |   true  |  Chemistry   |
+// ------------------------------------------------------------
 
 const map = {
   'START DATE': 'date',
@@ -184,13 +184,11 @@ const map = {
 readXlsxFile(file, { map }).then(({ rows }) => {
   rows === [{
     date: new Date(2018, 2, 24),
-    numberOfStudents: 123,
+    numberOfStudents: 10,
     course: {
       isFree: true,
       title: 'Chemistry'
-    },
-    contact: '(123) 456-7890',
-    status: 'SCHEDULED'
+    }
   }]
 })
 ```
