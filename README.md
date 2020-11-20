@@ -176,9 +176,7 @@ const map = {
       'IS FREE': 'isFree',
       'COURSE TITLE': 'title'
     }
-  },
-  'CONTACT': 'contact',
-  'STATUS': 'status'
+  }
 }
 
 readXlsxFile(file, { map }).then(({ rows }) => {
