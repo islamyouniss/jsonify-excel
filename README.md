@@ -156,6 +156,23 @@ There are also some additional exported `type`s:
 
 A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid.
 
+<details>
+<summary>
+The <code>convertToJson()</code> function is also exported as a standalone one from <code>read-excel-file/schema</code>
+</summary>
+
+#####
+
+```js
+import convertToJson from "read-excel-file/schema"
+
+// `data` is an array of rows, each row being an array of cells.
+// `schema` is a "to JSON" convertion schema (see above).
+const objects = convertToJson(data, schema)
+```
+</details>
+
+
 #### Map
 
 Sometimes, a developer might want to use some other (more advanced) solution for schema parsing and validation (like [`yup`](https://github.com/jquense/yup)). If a developer passes a `map` instead of a `schema` to `readXlsxFile()`, then it would just map each data row to a JSON object without doing any parsing or validation.
