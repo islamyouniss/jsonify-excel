@@ -51,6 +51,9 @@ export default function(data, schema, options) {
   // Correct error rows.
   if (rowMap) {
     for (const error of errors) {
+      // Convert the `row` index in `data` to the
+      // actual `row` index in the spreadsheet.
+      // The `1` compensates for the header row.
       error.row = rowMap[error.row] + 1
     }
   }
