@@ -195,7 +195,6 @@ function parseValueOfType(value, type, options) {
       return { value }
 
     case Number:
-    case 'Integer':
     case Integer:
       // The global isFinite() function determines
       // whether the passed value is a finite number.
@@ -214,14 +213,12 @@ function parseValueOfType(value, type, options) {
       }
       return { value }
 
-    case 'URL':
     case URL:
       if (!isURL(value)) {
         return { error: 'invalid' }
       }
       return { value }
 
-    case 'Email':
     case Email:
       if (!isEmail(value)) {
         return { error: 'invalid' }
