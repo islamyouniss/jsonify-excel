@@ -154,7 +154,7 @@ There are also some additional exported `type`s:
 * `URL` for parsing URLs.
 * `Email` for parsing email addresses.
 
-A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid.
+A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid. The `validate(value)` function is only called when `value` exists.
 
 <details>
 <summary>
