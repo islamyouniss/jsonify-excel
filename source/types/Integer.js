@@ -1,5 +1,7 @@
 export default function Integer() {}
 
+Integer.name = 'Integer'
+
 // https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
 export function isInteger(value)
 {
