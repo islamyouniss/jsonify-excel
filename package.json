@@ -36,10 +36,10 @@
     "prepublish": "npm-run-all build test browser-build"
   },
   "dependencies": {
-    "jszip": "^3.5.0",
-    "unzipper": "^0.9.15",
-    "xmldom": "^0.1.27",
-    "xpath": "0.0.27"
+    "jszip": "^3.6.0",
+    "unzipper": "^0.10.11",
+    "xmldom": "^0.5.0",
+    "xpath": "0.0.32"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
