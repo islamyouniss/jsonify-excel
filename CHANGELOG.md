@@ -5,7 +5,7 @@
   * Added [TypeScript](https://github.com/catamphetamine/read-excel-file/issues/71) definitions.
 -->
 
-5.0.2 / 06.04.2021
+5.1.0 / 06.04.2021
 ==================
 
   * Simply updated all dependencies to their latest version.
