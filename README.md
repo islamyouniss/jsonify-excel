@@ -4,7 +4,7 @@ Read small to medium `*.xlsx` files in a browser or Node.js. Parse to JSON with 
 
 [Demo](https://catamphetamine.gitlab.io/read-excel-file/)
 
-Also check [`write-excel-file`](https://gitlab.com/catamphetamine/write-excel-file).
+Also check [`write-excel-file`](https://www.npmjs.com/package/write-excel-file)
 
 ## Restrictions
 
