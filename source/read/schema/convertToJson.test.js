@@ -1,9 +1,10 @@
 import convertToJson, { parseArray, getBlock } from './convertToJson'
-import Integer from './types/Integer'
-import URL from './types/URL'
-import Email from './types/Email'
 
-const date = convertToUTCTimezone(new Date(2018, 3 - 1, 24, 12))
+import Integer from '../../types/Integer'
+import URL from '../../types/URL'
+import Email from '../../types/Email'
+
+const date = convertToUTCTimezone(new Date(2018, 3 - 1, 24))
 
 describe('convertToJson', () => {
 	it('should parse arrays', () => {
@@ -21,7 +22,7 @@ describe('convertToJson', () => {
 				'PHONE',
 				'PHONE_TYPE'
 			], [
-				new Date(Date.parse('03/24/2018') - new Date().getTimezoneOffset() * 60 * 1000 + 12 * 60 * 60 * 1000), // '43183', // '03/24/2018',
+				new Date(Date.parse('03/24/2018') - new Date().getTimezoneOffset() * 60 * 1000), // '43183', // '03/24/2018',
 				'123',
 				true,
 				'abc',
@@ -83,7 +84,7 @@ describe('convertToJson', () => {
 				'BOOLEAN',
 				'STRING'
 			], [
-				new Date(Date.parse('03/24/2018') - new Date().getTimezoneOffset() * 60 * 1000 + 12 * 60 * 60 * 1000), // '43183', // '03/24/2018',
+				new Date(Date.parse('03/24/2018') - new Date().getTimezoneOffset() * 60 * 1000), // '43183', // '03/24/2018',
 				123,
 				true,
 				'abc'

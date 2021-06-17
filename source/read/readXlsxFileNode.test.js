@@ -46,10 +46,10 @@ describe('readXlsxFileNode', () => {
 
 		const rowMap = []
 
-		return readXlsxFileNode(path.resolve(__dirname, '../test/spreadsheets/course.xlsx'), { schema, rowMap }).then(({ rows }) => {
+		return readXlsxFileNode(path.resolve(__dirname, '../../test/spreadsheets/course.xlsx'), { schema, rowMap }).then(({ rows }) => {
 			rows[0].date = rows[0].date.getTime()
 			rows.should.deep.equal([{
-				date: convertToUTCTimezone(new Date(2018, 2, 24, 12)).getTime(),
+				date: convertToUTCTimezone(new Date(2018, 2, 24)).getTime(),
 				numberOfStudents: 123,
 				course: {
 					isFree: false,
@@ -78,11 +78,11 @@ describe('readXlsxFileNode', () => {
 
 		const rowMap = []
 
-		return readXlsxFileNode(path.resolve(__dirname, '../test/spreadsheets/course.xlsx'), { map, rowMap }).then(({ rows, errors }) => {
+		return readXlsxFileNode(path.resolve(__dirname, '../../test/spreadsheets/course.xlsx'), { map, rowMap }).then(({ rows, errors }) => {
 			errors.should.deep.equal([])
 			rows[0].date = rows[0].date.getTime()
 			rows.should.deep.equal([{
-				date: convertToUTCTimezone(new Date(2018, 2, 24, 12)).getTime(),
+				date: convertToUTCTimezone(new Date(2018, 2, 24)).getTime(),
 				numberOfStudents: 123,
 				course: {
 					isFree: false,

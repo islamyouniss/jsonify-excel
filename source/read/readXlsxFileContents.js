@@ -1,6 +1,7 @@
 import readXlsx from './readXlsx'
-import convertToJson from './convertToJson'
-import convertMapToSchema from './convertMapToSchema'
+
+import convertToJson from './schema/convertToJson'
+import convertMapToSchema from './schema/convertMapToSchema'
 
 export default function readXlsxFileContents(entries, xml, { schema, map, ...options}) {
 	if (!schema && map) {

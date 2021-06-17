@@ -1,4 +1,4 @@
-import { loadAsync } from 'jszip'
+import JSZip from 'jszip'
 
 /**
  * Reads XLSX file in a browser.
@@ -8,7 +8,7 @@ import { loadAsync } from 'jszip'
 export default function unpackXlsxFile(file) {
 	const files = {}
 
-	return loadAsync(file).then((zip) => {
+	return JSZip.loadAsync(file).then((zip) => {
 		const files = []
 		zip.forEach((relativePath, zipEntry) => {
 			if (!zipEntry.dir) {

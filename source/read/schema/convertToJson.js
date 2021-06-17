@@ -1,7 +1,8 @@
-import parseDate from './parseDate'
-import Integer, { isInteger } from './types/Integer'
-import URL, { isURL } from './types/URL'
-import Email, { isEmail } from './types/Email'
+import parseDate from '../parseDate'
+
+import Integer, { isInteger } from '../../types/Integer'
+import URL, { isURL } from '../../types/URL'
+import Email, { isEmail } from '../../types/Email'
 
 const DEFAULT_OPTIONS = {
   isColumnOriented: false
@@ -281,6 +282,12 @@ export function getBlock(string, endCharacter, startIndex) {
   return [substring, i]
 }
 
+/**
+ * Parses a string of comma-separated substrings into an array of substrings.
+ * (the `export` is just for tests)
+ * @param  {string} string — A string of comma-separated substrings.
+ * @return {string[]} An array of substrings.
+ */
 export function parseArray(string) {
   const blocks = []
   let index = 0
