@@ -262,10 +262,6 @@ readXlsxFile(file, {
 
 See [testing `index.d.ts`](https://github.com/catamphetamine/read-excel-file/issues/71#issuecomment-675140448).
 
-## Browser compatibility
-
-Node.js `*.xlxs` parser uses `xpath` and `xmldom` packages for XML parsing. The same packages could be used in a browser because [all modern browsers](https://caniuse.com/#search=domparser) (except IE 11) have native `DOMParser` built-in which could is used instead (meaning smaller footprint and better performance) but since Internet Explorer 11 support is still required the browser version doesn't use the native `DOMParser` and instead uses `xpath` and `xmldom` packages for XML parsing just like the Node.js version.
-
 ## Gotchas
 
 ### Formulas
@@ -316,13 +312,11 @@ One can use any npm CDN service, e.g. [unpkg.com](https://unpkg.com) or [jsdeliv
 
 ## References
 
-For XML parsing [`xmldom`](https://github.com/jindw/xmldom) and [`xpath`](https://github.com/goto100/xpath) are used.
-
-Writing `*.xlsx` files has been copy-pasted from [`zipcelx`](https://medium.com/@Nopziiemoo/create-excel-files-using-javascript-without-all-the-fuss-2c4aa5377813) package.
+Uses [`xmldom`](https://github.com/jindw/xmldom) for parsing XML.
 
 ## GitHub
 
-On March 9th, 2020, GitHub, Inc. silently [banned](https://medium.com/@catamphetamine/how-github-blocked-me-and-all-my-libraries-c32c61f061d3) my account (and all my libraries) without any notice. I opened a support ticked but they didn't answer. Because of that, I had to move all my libraries to [GitLab](https://gitlab.com/catamphetamine).
+On March 9th, 2020, GitHub, Inc. silently [banned](https://medium.com/@catamphetamine/how-github-blocked-me-and-all-my-libraries-c32c61f061d3) my account (erasing all my repos, issues and comments, even in my employer's private repos) without any notice or explanation. Because of that, all source codes had to be promptly moved to GitLab. The [GitHub repo](https://github.com/catamphetamine/read-excel-file) is now only used as a backup (you can star the repo there too), and the primary repo is now the [GitLab one](https://gitlab.com/catamphetamine/read-excel-file). Issues can be reported in any repo.
 
 ## License
 
