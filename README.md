@@ -158,6 +158,19 @@ There are also some additional exported `type`s available:
 * `URL` for parsing URLs.
 * `Email` for parsing email addresses.
 
+A custom `type` can be defined as a simple function:
+
+```js
+type: (value) => {
+  try {
+    return parseValue(value)
+  } catch (error) {
+    console.error(error)
+    throw new Error('invalid')
+  }
+}
+```
+
 A schema entry for a column may also define an optional `validate(value)` function for validating the parsed value: in that case, it must `throw` an `Error` if the `value` is invalid. The `validate(value)` function is only called when `value` exists.
 
 <details>
