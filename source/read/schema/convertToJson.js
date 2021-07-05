@@ -142,7 +142,16 @@ export function parseValue(value, schemaEntry, options) {
   if (schemaEntry.parse) {
     result = parseCustomValue(value, schemaEntry.parse)
   } else if (schemaEntry.type) {
-    result = parseValueOfType(value, Array.isArray(schemaEntry.type) ? schemaEntry.type[0] : schemaEntry.type, options)
+    result = parseValueOfType(
+      value,
+      // Supports parsing array types.
+      // See `parseArray()` function for more details.
+      // Example `type`: String[]
+      // Input: 'Barack Obama, "String, with, colons", Donald Trump'
+      // Output: ['Barack Obama', 'String, with, colons', 'Donald Trump']
+      Array.isArray(schemaEntry.type) ? schemaEntry.type[0] : schemaEntry.type,
+      options
+    )
   } else {
     result = { value: value }
     // throw new Error('Invalid schema entry: no .type and no .parse():\n\n' + JSON.stringify(schemaEntry, null, 2))
