@@ -268,6 +268,10 @@ function Cell(cellNode, sheet, xml, values, styles, properties, options) {
       } else {
         throw new Error(`Unsupported "inline string" cell value structure: ${cellNode.textContent}`)
       }
+      value = value.trim()
+      if (value === '') {
+        value = undefined
+      }
       break
 
     // If the cell contains a "shared" string.
@@ -279,7 +283,8 @@ function Cell(cellNode, sheet, xml, values, styles, properties, options) {
       // If a `<c/>` element exists then it's not empty.
       // The `<v/>`alue is a key in the "shared strings" dictionary of the
       // XLSX file, so look it up in the `values` dictionary by the numeric key.
-      value = values[parseInt(value)].trim()
+      value = values[parseInt(value)]
+      value = value.trim()
       if (value === '') {
         value = undefined
       }
