@@ -40,16 +40,16 @@ export default function readXlsx(contents, xml, options = {}) {
 
   // Some Excel editors don't want to use standard naming scheme for sheet files.
   // https://github.com/tidyverse/readxl/issues/104
-  const fileNames = parseFileNames(contents['xl/_rels/workbook.xml.rels'], xml)
+  const filePaths = parseFilePaths(contents['xl/_rels/workbook.xml.rels'], xml)
 
   // Default file path for "shared strings": "xl/sharedStrings.xml".
-  const values = fileNames.sharedStrings
-    ? parseValues(contents[`xl/${fileNames.sharedStrings}`], xml)
+  const values = filePaths.sharedStrings
+    ? parseValues(contents[filePaths.sharedStrings], xml)
     : []
 
   // Default file path for "styles": "xl/styles.xml".
-  const styles = fileNames.styles
-    ? parseStyles(contents[`xl/${fileNames.styles}`], xml)
+  const styles = filePaths.styles
+    ? parseStyles(contents[filePaths.styles], xml)
     : {}
 
   const properties = parseProperties(contents['xl/workbook.xml'], xml)
@@ -78,13 +78,13 @@ export default function readXlsx(contents, xml, options = {}) {
 
   // If the sheet wasn't found then throw an error.
   // Example: "xl/worksheets/sheet1.xml".
-  if (!sheetRelationId || !fileNames.sheets[sheetRelationId]) {
+  if (!sheetRelationId || !filePaths.sheets[sheetRelationId]) {
     throw createSheetNotFoundError(options.sheet, properties.sheets)
   }
 
   // Parse sheet data.
   const sheet = parseSheet(
-    contents[`xl/${fileNames.sheets[sheetRelationId]}`],
+    contents[filePaths.sheets[sheetRelationId]],
     xml,
     values,
     styles,
@@ -559,15 +559,14 @@ function parseProperties(content, xml) {
 
 /**
  * Returns sheet file paths.
- * Seems that the correct place to look for the
- * `sheetId` -> `filename` mapping seems to be in the
- * `xl/_rels/workbook.xml.rels` file.
+ * Seems that the correct place to look for the `sheetId` -> `filename` mapping
+ * is `xl/_rels/workbook.xml.rels` file.
  * https://github.com/tidyverse/readxl/issues/104
  * @param  {string} content — `xl/_rels/workbook.xml.rels` file contents.
  * @param  {object} xml
  * @return {object}
  */
-function parseFileNames(content, xml) {
+function parseFilePaths(content, xml) {
   // Example:
   // <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   //   ...
@@ -578,37 +577,57 @@ function parseFileNames(content, xml) {
   // </Relationships>
   const document = xml.createDocument(content)
 
-  const fileNames = {
+  const filePaths = {
     sheets: {},
     sharedStrings: undefined,
     styles: undefined
   }
 
-  const addFileNamesInfo = (relationship) => {
+  const addFilePathInfo = (relationship) => {
     const filePath = relationship.getAttribute('Target')
-    switch (relationship.getAttribute('Type')) {
+    const fileType = relationship.getAttribute('Type')
+    switch (fileType) {
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles':
-        fileNames.styles = filePath
+        filePaths.styles = getFilePath(filePath)
         break
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings':
-        fileNames.sharedStrings = filePath
+        filePaths.sharedStrings = getFilePath(filePath)
         break
       case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet':
-        fileNames.sheets[relationship.getAttribute('Id')] = filePath
+        filePaths.sheets[relationship.getAttribute('Id')] = getFilePath(filePath)
         break
     }
   }
 
-  getRelationships(document).forEach(addFileNamesInfo)
+  getRelationships(document).forEach(addFilePathInfo)
 
   // Seems like "sharedStrings.xml" is not required to exist.
   // For example, when the spreadsheet doesn't contain any strings.
   // https://github.com/catamphetamine/read-excel-file/issues/85
-  // if (!fileNames.sharedStrings) {
+  // if (!filePaths.sharedStrings) {
   //   throw new Error('"sharedStrings.xml" file not found in the *.xlsx file')
   // }
 
-  return fileNames
+  return filePaths
+}
+
+function getFilePath(path) {
+  // Normally, `path` is a relative path inside the ZIP archive,
+  // like "worksheets/sheet1.xml", or "sharedStrings.xml", or "styles.xml".
+  // There has been one weird case when file path was an absolute path,
+  // like "/xl/worksheets/sheet1.xml" (specifically for sheets):
+  // https://github.com/catamphetamine/read-excel-file/pull/95
+  // Other libraries (like `xlsx`) and software (like Google Docs)
+  // seem to support such absolute file paths, so this library does too.
+  if (path[0] === '/') {
+    return path.slice('/'.length)
+  }
+  // // Seems like a path could also be a URL.
+  // // http://officeopenxml.com/anatomyofOOXML-xlsx.php
+  // if (/^[a-z]+\:\/\//.test(path)) {
+  //   return path
+  // }
+  return 'xl/' + path
 }
 
 function isDateTemplate(template) {
