@@ -3,6 +3,7 @@ import parseDate from './parseDate'
 import {
   getSharedStrings,
   getCellValue,
+  getCellInlineStringValue,
   getCells,
   getDimensions,
   getBaseStyles,
@@ -260,12 +261,8 @@ function Cell(cellNode, sheet, xml, values, styles, properties, options) {
 
     // If the cell contains an "inline" (not "shared") string.
     case 'inlineStr':
-      if (cellNode.firstChild &&
-        cellNode.firstChild.tagName === 'is' &&
-        cellNode.firstChild.firstChild &&
-        cellNode.firstChild.firstChild.tagName === 't') {
-        value = cellNode.firstChild.firstChild.textContent
-      } else {
+      value = getCellInlineStringValue(cellNode)
+      if (value === undefined) {
         throw new Error(`Unsupported "inline string" cell value structure: ${cellNode.textContent}`)
       }
       value = value.trim()

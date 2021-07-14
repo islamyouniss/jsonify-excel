@@ -1,4 +1,4 @@
-import { findChild, findChildren, forEach, map } from './dom'
+import { findChild, findChildren, forEach, map, getTagName } from './dom'
 
 export function getCells(document) {
   const worksheet = document.documentElement
@@ -14,6 +14,15 @@ export function getCells(document) {
 
 export function getCellValue(document, node) {
   return findChild(node, 'v')
+}
+
+export function getCellInlineStringValue(cellNode) {
+  if (cellNode.firstChild &&
+    getTagName(cellNode.firstChild) === 'is' &&
+    cellNode.firstChild.firstChild &&
+    getTagName(cellNode.firstChild.firstChild) === 't') {
+    return cellNode.firstChild.firstChild.textContent
+  }
 }
 
 export function getDimensions(document) {
