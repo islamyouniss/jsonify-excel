@@ -12,6 +12,7 @@ import {
   getCellValue,
   getCellInlineStringValue,
   getCells,
+  getMergedCells,
   getDimensions,
   getBaseStyles,
   getCellStyles,
@@ -207,7 +208,7 @@ function parseCell(cellNode, sheet, xml, values, styles, properties, options) {
     row: coords[0],
     column: coords[1],
     value: parseCellValue(value, type, {
-      getInlineStringValue: () => getCellInlineStringValue(cellNode),
+      getInlineStringValue: () => getCellInlineStringValue(sheet, cellNode),
       getStyleId: () => cellNode.getAttribute('s'),
       styles,
       values,
@@ -224,6 +225,12 @@ function parseSheet(content, xml, values, styles, properties, options) {
 
   if (cells.length === 0) {
     return { cells: [] }
+  }
+
+  const mergedCells = getMergedCells(sheet)
+  for (const mergedCell of mergedCells) {
+    const [from, to] = mergedCell.split(':').map(parseCellCoordinates)
+    console.log('Merged Cell.', 'From:', from, 'To:', to)
   }
 
   cells = cells.map((node) => {
