@@ -1,4 +1,6 @@
-import parseDate from './parseDate'
+import parseCellValue from './parseCellValue'
+import dropEmptyRows from './dropEmptyRows'
+import dropEmptyColumns from './dropEmptyColumns'
 
 import {
   getSharedStrings,
@@ -16,9 +18,6 @@ import {
 
 // Maps "A1"-like coordinates to `{ row, column }` numeric coordinates.
 const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-
-// https://hexdocs.pm/xlsxir/number_styles.html
-const BUILT_IN_DATE_NUMBER_FORMAT_IDS = [14,15,16,17,18,19,20,21,22,27,30,36,45,46,47,50,57]
 
 // "The minimum viable XLSX reader"
 // https://www.brendanlong.com/the-minimum-viable-xlsx-reader.html
@@ -189,7 +188,7 @@ function colToInt(col) {
   return n
 }
 
-function CellCoords(coords) {
+function parseCellCoordinates(coords) {
   // Examples: "AA2091", "R988", "B1"
   coords = coords.split(/(\d+)/)
   return [
@@ -225,8 +224,8 @@ function CellCoords(coords) {
 //    </extLst>
 // </c>
 //
-function Cell(cellNode, sheet, xml, values, styles, properties, options) {
-  const coords = CellCoords(cellNode.getAttribute('r'))
+function parseCell(cellNode, sheet, xml, values, styles, properties, options) {
+  const coords = parseCellCoordinates(cellNode.getAttribute('r'))
 
   const valueElement = getCellValue(sheet, cellNode)
 
@@ -238,178 +237,20 @@ function Cell(cellNode, sheet, xml, values, styles, properties, options) {
   let type
   if (cellNode.hasAttribute('t')) {
     type = cellNode.getAttribute('t')
-  } else {
-    // Default cell type is "n" (numeric).
-    // http://www.datypic.com/sc/ooxml/t-ssml_CT_Cell.html
-    type = 'n'
-  }
-
-  // Available Excel cell types:
-  // https://github.com/SheetJS/sheetjs/blob/19620da30be2a7d7b9801938a0b9b1fd3c4c4b00/docbits/52_datatype.md
-  //
-  // Some other document (seems to be old):
-  // http://webapp.docx4java.org/OnlineDemo/ecma376/SpreadsheetML/ST_CellType.html
-  //
-  switch (type) {
-    // If the cell contains formula string.
-    case 'str':
-      value = value.trim()
-      if (value === '') {
-        value = undefined
-      }
-      break
-
-    // If the cell contains an "inline" (not "shared") string.
-    case 'inlineStr':
-      value = getCellInlineStringValue(cellNode)
-      if (value === undefined) {
-        throw new Error(`Unsupported "inline string" cell value structure: ${cellNode.textContent}`)
-      }
-      value = value.trim()
-      if (value === '') {
-        value = undefined
-      }
-      break
-
-    // If the cell contains a "shared" string.
-    // "Shared" strings is a way for an Excel editor to reduce
-    // the file size by storing "commonly used" strings in a dictionary
-    // and then referring to such strings by their index in that dictionary.
-    case 's':
-      // If a cell has no value then there's no `<c/>` element for it.
-      // If a `<c/>` element exists then it's not empty.
-      // The `<v/>`alue is a key in the "shared strings" dictionary of the
-      // XLSX file, so look it up in the `values` dictionary by the numeric key.
-      value = values[parseInt(value)]
-      value = value.trim()
-      if (value === '') {
-        value = undefined
-      }
-      break
-
-    case 'b':
-      value = value === '1' ? true : false
-      break
-
-    // Stub: blank stub cell that is ignored by data processing utilities.
-    case 'z':
-      value = undefined
-      break
-
-    // Error: `value` is a numeric code.
-    // They also wrote: "and `w` property stores its common name".
-    // It's unclear what they meant by that.
-    case 'e':
-      value = decodeError(value)
-      break
-
-    // Date: a string to be parsed as a date.
-    // (usually a string in "ISO 8601" format)
-    case 'd':
-      if (value === undefined) {
-        break
-      }
-      value = new Date(value)
-      break
-
-    case 'n':
-      if (value === undefined) {
-        break
-      }
-      value = parseFloat(value)
-      // XLSX does have "d" type for dates, but it's not commonly used.
-      //  specific format for dates.
-      // Sometimes a date can be heuristically detected.
-      // https://github.com/catamphetamine/read-excel-file/issues/3#issuecomment-395770777
-      //
-      // Format IDs:
-      // https://xlsxwriter.readthedocs.io/format.html#format-set-num-format
-      //
-      if (cellNode.hasAttribute('s')) {
-        const styleId = parseInt(cellNode.getAttribute('s'))
-        const style = styles[styleId]
-        if (!style) {
-          throw new Error(`Cell style not found: ${styleId}`)
-        }
-        if (BUILT_IN_DATE_NUMBER_FORMAT_IDS.indexOf(parseInt(style.numberFormat.id)) >= 0 ||
-          (options.dateFormat && style.numberFormat.template === options.dateFormat) ||
-          (options.smartDateParser !== false && style.numberFormat.template && isDateTemplate(style.numberFormat.template))) {
-          value = parseDate(value, properties)
-        }
-      }
-      break
-
-    default:
-      throw new TypeError(`Cell type not supported: ${type}`)
-  }
-
-  // Convert empty values to `null`.
-  if (value === undefined) {
-    value = null
   }
 
   return {
     row: coords[0],
     column: coords[1],
-    value
+    value: parseCellValue(value, type, {
+      getInlineStringValue: () => getCellInlineStringValue(cellNode),
+      getStyleId: () => cellNode.getAttribute('s'),
+      styles,
+      values,
+      properties,
+      options
+    })
   }
-}
-
-export function dropEmptyRows(data, {
-  rowMap,
-  accessor = _ => _,
-  onlyTrimAtTheEnd
-} = {}) {
-  // Drop empty rows.
-  let i = data.length - 1
-  while (i >= 0) {
-    // Check if the row is empty.
-    let empty = true
-    for (const cell of data[i]) {
-      if (accessor(cell) !== null) {
-        empty = false
-        break
-      }
-    }
-    // Remove the empty row.
-    if (empty) {
-      data.splice(i, 1)
-      if (rowMap) {
-        rowMap.splice(i, 1)
-      }
-    } else if (onlyTrimAtTheEnd) {
-      break
-    }
-    i--
-  }
-  return data
-}
-
-export function dropEmptyColumns(data, {
-  accessor = _ => _,
-  onlyTrimAtTheEnd
-} = {}) {
-  let i = data[0].length - 1
-  while (i >= 0) {
-    let empty = true
-    for (const row of data) {
-      if (accessor(row[i]) !== null) {
-        empty = false
-        break
-      }
-    }
-    if (empty) {
-      let j = 0;
-      while (j < data.length) {
-        data[j].splice(i, 1)
-        j++
-      }
-    } else if (onlyTrimAtTheEnd) {
-      break
-    }
-    i--
-  }
-  return data
 }
 
 function parseSheet(content, xml, values, styles, properties, options) {
@@ -422,12 +263,12 @@ function parseSheet(content, xml, values, styles, properties, options) {
   }
 
   cells = cells.map((node) => {
-    return Cell(node, sheet, xml, values, styles, properties, options)
+    return parseCell(node, sheet, xml, values, styles, properties, options)
   })
 
   let dimensions = getDimensions(sheet)
   if (dimensions) {
-    dimensions = dimensions.split(':').map(CellCoords).map(([row, column]) => ({
+    dimensions = dimensions.split(':').map(parseCellCoordinates).map(([row, column]) => ({
       row,
       column
     }))
@@ -627,45 +468,7 @@ function getFilePath(path) {
   return 'xl/' + path
 }
 
-function isDateTemplate(template) {
-  const tokens = template.split(/\W+/)
-  for (const token of tokens) {
-    if (['MM', 'DD', 'YY', 'YYYY'].indexOf(token) < 0) {
-      return false
-    }
-  }
-  return true
-}
-
 function createSheetNotFoundError(sheet, sheets) {
   const sheetsList = sheets && sheets.map((sheet, i) => `"${sheet.name}" (#${i + 1})`).join(', ')
   return new Error(`Sheet ${typeof sheet === 'number' ? '#' + sheet : '"' + sheet + '"'} not found in the *.xlsx file.${sheets ? ' Available sheets: ' + sheetsList + '.' : ''}`)
-}
-
-// Decodes numeric error code to a string code.
-// https://github.com/SheetJS/sheetjs/blob/19620da30be2a7d7b9801938a0b9b1fd3c4c4b00/docbits/52_datatype.md
-function decodeError(errorCode) {
-  // While the error values are determined by the application,
-  // the following are some example error values that could be used:
-  switch (errorCode) {
-    case 0x00:
-      return '#NULL!'
-    case 0x07:
-      return '#DIV/0!'
-    case 0x0F:
-      return '#VALUE!'
-    case 0x17:
-      return '#REF!'
-    case 0x1D:
-      return '#NAME?'
-    case 0x24:
-      return '#NUM!'
-    case 0x2A:
-      return '#N/A'
-    case 0x2B:
-      return '#GETTING_DATA'
-    default:
-      // Such error code doesn't exist. I made it up.
-      return `#ERROR_${errorCode}`
-  }
 }
