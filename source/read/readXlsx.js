@@ -2,20 +2,10 @@ import parseProperties from './parseProperties'
 import parseFilePaths from './parseFilePaths'
 import parseStyles from './parseStyles'
 import parseSharedStrings from './parseSharedStrings'
-import parseDimensions from './parseDimensions'
-import parseCell from './parseCell'
+import parseSheet from './parseSheet'
 import getData from './getData'
 
-import {
-  calculateDimensions
-} from './coordinates'
-
-import {
-  getCells,
-  getMergedCells
-} from '../xml/xlsx'
-
-// "The minimum viable XLSX reader"
+// For an introduction in reading `*.xlsx` files see "The minimum viable XLSX reader":
 // https://www.brendanlong.com/the-minimum-viable-xlsx-reader.html
 
 /**
@@ -90,30 +80,6 @@ export default function readXlsx(contents, xml, options = {}) {
 
   // Return spreadsheet data.
   return data
-}
-
-function parseSheet(content, xml, values, styles, properties, options) {
-  const sheet = xml.createDocument(content)
-
-  let cells = getCells(sheet)
-
-  if (cells.length === 0) {
-    return { cells: [] }
-  }
-
-  // const mergedCells = getMergedCells(sheet)
-  // for (const mergedCell of mergedCells) {
-  //   const [from, to] = mergedCell.split(':').map(parseCellCoordinates)
-  //   console.log('Merged Cell.', 'From:', from, 'To:', to)
-  // }
-
-  cells = cells.map((node) => {
-    return parseCell(node, sheet, xml, values, styles, properties, options)
-  })
-
-  const dimensions = parseDimensions(sheet) || calculateDimensions(cells)
-
-  return { cells, dimensions }
 }
 
 function getSheetId(sheet, sheets) {
