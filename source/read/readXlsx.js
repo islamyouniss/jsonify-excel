@@ -176,7 +176,7 @@ function calculateDimensions (cells) {
   ]
 }
 
-function colToInt(col) {
+function columnLetterToNumber(col) {
   // `for ... of ...` would require Babel polyfill for iterating a string.
   let n = 0
   let i = 0
@@ -195,7 +195,7 @@ function parseCellCoordinates(coords) {
     // Row.
     parseInt(coords[1]),
     // Column.
-    colToInt(coords[0].trim())
+    columnLetterToNumber(coords[0].trim())
   ]
 }
 
