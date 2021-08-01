@@ -1,25 +1,18 @@
-import parseCellValue from './parseCellValue'
-import dropEmptyRows from './dropEmptyRows'
-import dropEmptyColumns from './dropEmptyColumns'
+import parseProperties from './parseProperties'
+import parseFilePaths from './parseFilePaths'
+import parseStyles from './parseStyles'
+import parseSharedStrings from './parseSharedStrings'
+import parseDimensions from './parseDimensions'
+import parseCell from './parseCell'
+import getData from './getData'
 
 import {
-  calculateDimensions,
-  parseCellCoordinates
+  calculateDimensions
 } from './coordinates'
 
 import {
-  getSharedStrings,
-  getCellValue,
-  getCellInlineStringValue,
   getCells,
-  getMergedCells,
-  getDimensions,
-  getBaseStyles,
-  getCellStyles,
-  getNumberFormats,
-  getWorkbookProperties,
-  getRelationships,
-  getSheets
+  getMergedCells
 } from '../xml/xlsx'
 
 // "The minimum viable XLSX reader"
@@ -47,7 +40,7 @@ export default function readXlsx(contents, xml, options = {}) {
 
   // Default file path for "shared strings": "xl/sharedStrings.xml".
   const values = filePaths.sharedStrings
-    ? parseValues(contents[filePaths.sharedStrings], xml)
+    ? parseSharedStrings(contents[filePaths.sharedStrings], xml)
     : []
 
   // Default file path for "styles": "xl/styles.xml".
@@ -66,28 +59,17 @@ export default function readXlsx(contents, xml, options = {}) {
   }
 
   // Find the sheet by name, or take the first one.
-  let sheetRelationId
-  if (typeof options.sheet === 'number') {
-    const _sheet = properties.sheets[options.sheet - 1]
-    sheetRelationId = _sheet && _sheet.relationId
-  } else {
-    for (const sheet of properties.sheets) {
-      if (sheet.name === options.sheet) {
-        sheetRelationId = sheet.relationId
-        break
-      }
-    }
-  }
+  const sheetId = getSheetId(options.sheet, properties.sheets)
 
   // If the sheet wasn't found then throw an error.
   // Example: "xl/worksheets/sheet1.xml".
-  if (!sheetRelationId || !filePaths.sheets[sheetRelationId]) {
+  if (!sheetId || !filePaths.sheets[sheetId]) {
     throw createSheetNotFoundError(options.sheet, properties.sheets)
   }
 
   // Parse sheet data.
   const sheet = parseSheet(
-    contents[filePaths.sheets[sheetRelationId]],
+    contents[filePaths.sheets[sheetId]],
     xml,
     values,
     styles,
@@ -95,65 +77,10 @@ export default function readXlsx(contents, xml, options = {}) {
     options
   )
 
-  // If the sheet is empty.
-  if (sheet.cells.length === 0) {
-    if (options.properties) {
-      return {
-        data: [],
-        properties
-      }
-    }
-    return []
-  }
+  // Get spreadsheet data.
+  const data = getData(sheet, options)
 
-  const [ leftTop, rightBottom ] = sheet.dimensions
-
-  const colsCount = (rightBottom.column - leftTop.column) + 1
-  const rowsCount = (rightBottom.row - leftTop.row) + 1
-
-  // `sheet.cells` seem to not necessarily be sorted by row and column.
-  let data = new Array(rowsCount)
-  let i = 0
-  while (i < rowsCount) {
-    data[i] = new Array(colsCount)
-    let j = 0
-    while (j < colsCount) {
-      data[i][j] = null
-      j++
-    }
-    i++
-  }
-
-  for (const cell of sheet.cells) {
-    const row = cell.row - leftTop.row
-    const column = cell.column - leftTop.column
-    data[row][column] = cell.value
-  }
-
-  // Fill in the row map.
-  const { rowMap } = options
-  if (rowMap) {
-    let i = 0
-    while (i < data.length) {
-      rowMap[i] = i
-      i++
-    }
-  }
-
-  data = dropEmptyRows(
-    dropEmptyColumns(data, { onlyTrimAtTheEnd: true }),
-    { onlyTrimAtTheEnd: true, rowMap }
-  )
-
-  if (options.transformData) {
-    data = options.transformData(data)
-    // data = options.transformData(data, {
-    //   dropEmptyRowsAndColumns(data) {
-    //     return dropEmptyRows(dropEmptyColumns(data), { rowMap })
-    //   }
-    // })
-  }
-
+  // Can return properties, if required.
   if (options.properties) {
     return {
       data,
@@ -161,61 +88,8 @@ export default function readXlsx(contents, xml, options = {}) {
     }
   }
 
+  // Return spreadsheet data.
   return data
-}
-
-// Example of a `<c/>`ell element:
-//
-// <c>
-//    <f>string</f> — formula.
-//    <v>string</v> — formula pre-computed value.
-//    <is>
-//       <t>string</t> — an `inlineStr` string (rather than a "common string" from a dictionary).
-//       <r>
-//          <rPr>
-//            ...
-//          </rPr>
-//          <t>string</t>
-//       </r>
-//       <rPh sb="1" eb="1">
-//          <t>string</t>
-//       </rPh>
-//       <phoneticPr fontId="1"/>
-//    </is>
-//    <extLst>
-//       <ext>
-//          <!--any element-->
-//       </ext>
-//    </extLst>
-// </c>
-//
-function parseCell(cellNode, sheet, xml, values, styles, properties, options) {
-  const coords = parseCellCoordinates(cellNode.getAttribute('r'))
-
-  const valueElement = getCellValue(sheet, cellNode)
-
-  // For `xpath`, `value` can be `undefined` while for native `DOMParser` it's `null`.
-  // So using `value && ...` instead of `if (value !== undefined) { ... }` here
-  // for uniform compatibility with both `xpath` and native `DOMParser`.
-  let value = valueElement && valueElement.textContent
-
-  let type
-  if (cellNode.hasAttribute('t')) {
-    type = cellNode.getAttribute('t')
-  }
-
-  return {
-    row: coords[0],
-    column: coords[1],
-    value: parseCellValue(value, type, {
-      getInlineStringValue: () => getCellInlineStringValue(sheet, cellNode),
-      getStyleId: () => cellNode.getAttribute('s'),
-      styles,
-      values,
-      properties,
-      options
-    })
-  }
 }
 
 function parseSheet(content, xml, values, styles, properties, options) {
@@ -227,216 +101,31 @@ function parseSheet(content, xml, values, styles, properties, options) {
     return { cells: [] }
   }
 
-  const mergedCells = getMergedCells(sheet)
-  for (const mergedCell of mergedCells) {
-    const [from, to] = mergedCell.split(':').map(parseCellCoordinates)
-    console.log('Merged Cell.', 'From:', from, 'To:', to)
-  }
+  // const mergedCells = getMergedCells(sheet)
+  // for (const mergedCell of mergedCells) {
+  //   const [from, to] = mergedCell.split(':').map(parseCellCoordinates)
+  //   console.log('Merged Cell.', 'From:', from, 'To:', to)
+  // }
 
   cells = cells.map((node) => {
     return parseCell(node, sheet, xml, values, styles, properties, options)
   })
 
-  let dimensions = getDimensions(sheet)
-  if (dimensions) {
-    dimensions = dimensions.split(':').map(parseCellCoordinates).map(([row, column]) => ({
-      row,
-      column
-    }))
-    // When there's only a single cell on a sheet
-    // there can sometimes be just "A1" for the dimensions string.
-    if (dimensions.length === 1) {
-      dimensions = [dimensions[0], dimensions[0]]
-    }
-  } else {
-    dimensions = calculateDimensions(cells)
-  }
+  const dimensions = parseDimensions(sheet) || calculateDimensions(cells)
 
   return { cells, dimensions }
 }
 
-function parseValues(content, xml) {
-  if (!content) {
-    return []
+function getSheetId(sheet, sheets) {
+  if (typeof sheet === 'number') {
+    const _sheet = sheets[sheet - 1]
+    return _sheet && _sheet.relationId
   }
-  return getSharedStrings(xml.createDocument(content))
-}
-
-// http://officeopenxml.com/SSstyles.php
-// Returns an array of cell styles.
-// A cell style index is its ID.
-function parseStyles(content, xml) {
-  if (!content) {
-    return {}
-  }
-
-  // https://social.msdn.microsoft.com/Forums/sqlserver/en-US/708978af-b598-45c4-a598-d3518a5a09f0/howwhen-is-cellstylexfs-vs-cellxfs-applied-to-a-cell?forum=os_binaryfile
-  // https://www.office-forums.com/threads/cellxfs-cellstylexfs.2163519/
-  const doc = xml.createDocument(content)
-
-  const baseStyles = getBaseStyles(doc)
-    .map(parseCellStyle)
-
-  const numberFormats = getNumberFormats(doc)
-    .map(parseNumberFormatStyle)
-    .reduce((formats, format) => {
-      // Format ID is a numeric index.
-      // There're some standard "built-in" formats (in Excel) up to about `100`.
-      formats[format.id] = format
-      return formats
-    }, [])
-
-  const getCellStyle = (xf) => {
-    if (xf.hasAttribute('xfId')) {
-      return {
-        ...baseStyles[xf.xfId],
-        ...parseCellStyle(xf, numberFormats)
-      }
-    }
-    return parseCellStyle(xf, numberFormats)
-  }
-
-  return getCellStyles(doc).map(getCellStyle)
-}
-
-function parseNumberFormatStyle(numFmt) {
-  return {
-    id: numFmt.getAttribute('numFmtId'),
-    template: numFmt.getAttribute('formatCode')
-  }
-}
-
-// http://www.datypic.com/sc/ooxml/e-ssml_xf-2.html
-function parseCellStyle(xf, numFmts) {
-  const style = {}
-  if (xf.hasAttribute('numFmtId')) {
-    const numberFormatId = xf.getAttribute('numFmtId')
-    // Built-in number formats don't have a `<numFmt/>` element in `styles.xml`.
-    // https://hexdocs.pm/xlsxir/number_styles.html
-    if (numFmts[numberFormatId]) {
-      style.numberFormat = numFmts[numberFormatId]
-    } else {
-      style.numberFormat = { id: numberFormatId }
+  for (const _sheet of sheets) {
+    if (_sheet.name === sheet) {
+      return _sheet.relationId
     }
   }
-  return style
-}
-
-// I guess `xl/workbook.xml` file should always be present inside the *.xlsx archive.
-function parseProperties(content, xml) {
-  const book = xml.createDocument(content)
-
-  const properties = {};
-
-  // Read `<workbookPr/>` element to detect whether dates are 1900-based or 1904-based.
-  // https://support.microsoft.com/en-gb/help/214330/differences-between-the-1900-and-the-1904-date-system-in-excel
-  // http://webapp.docx4java.org/OnlineDemo/ecma376/SpreadsheetML/workbookPr.html
-
-  const workbookProperties = getWorkbookProperties(book)
-
-  if (workbookProperties && workbookProperties.getAttribute('date1904') === '1') {
-    properties.epoch1904 = true
-  }
-
-  // Get sheets info (indexes, names, if they're available).
-  // Example:
-  // <sheets>
-  //   <sheet
-  //     xmlns:ns="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-  //     name="Sheet1"
-  //     sheetId="1"
-  //     ns:id="rId3"/>
-  // </sheets>
-  // http://www.datypic.com/sc/ooxml/e-ssml_sheet-1.html
-
-  properties.sheets = []
-
-  const addSheetInfo = (sheet) => {
-    if (sheet.getAttribute('name')) {
-      properties.sheets.push({
-        id: sheet.getAttribute('sheetId'),
-        name: sheet.getAttribute('name'),
-        relationId: sheet.getAttribute('r:id')
-      })
-    }
-  }
-
-  getSheets(book).forEach(addSheetInfo)
-
-  return properties;
-}
-
-/**
- * Returns sheet file paths.
- * Seems that the correct place to look for the `sheetId` -> `filename` mapping
- * is `xl/_rels/workbook.xml.rels` file.
- * https://github.com/tidyverse/readxl/issues/104
- * @param  {string} content — `xl/_rels/workbook.xml.rels` file contents.
- * @param  {object} xml
- * @return {object}
- */
-function parseFilePaths(content, xml) {
-  // Example:
-  // <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  //   ...
-  //   <Relationship
-  //     Id="rId3"
-  //     Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"
-  //     Target="worksheets/sheet1.xml"/>
-  // </Relationships>
-  const document = xml.createDocument(content)
-
-  const filePaths = {
-    sheets: {},
-    sharedStrings: undefined,
-    styles: undefined
-  }
-
-  const addFilePathInfo = (relationship) => {
-    const filePath = relationship.getAttribute('Target')
-    const fileType = relationship.getAttribute('Type')
-    switch (fileType) {
-      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles':
-        filePaths.styles = getFilePath(filePath)
-        break
-      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings':
-        filePaths.sharedStrings = getFilePath(filePath)
-        break
-      case 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet':
-        filePaths.sheets[relationship.getAttribute('Id')] = getFilePath(filePath)
-        break
-    }
-  }
-
-  getRelationships(document).forEach(addFilePathInfo)
-
-  // Seems like "sharedStrings.xml" is not required to exist.
-  // For example, when the spreadsheet doesn't contain any strings.
-  // https://github.com/catamphetamine/read-excel-file/issues/85
-  // if (!filePaths.sharedStrings) {
-  //   throw new Error('"sharedStrings.xml" file not found in the *.xlsx file')
-  // }
-
-  return filePaths
-}
-
-function getFilePath(path) {
-  // Normally, `path` is a relative path inside the ZIP archive,
-  // like "worksheets/sheet1.xml", or "sharedStrings.xml", or "styles.xml".
-  // There has been one weird case when file path was an absolute path,
-  // like "/xl/worksheets/sheet1.xml" (specifically for sheets):
-  // https://github.com/catamphetamine/read-excel-file/pull/95
-  // Other libraries (like `xlsx`) and software (like Google Docs)
-  // seem to support such absolute file paths, so this library does too.
-  if (path[0] === '/') {
-    return path.slice('/'.length)
-  }
-  // // Seems like a path could also be a URL.
-  // // http://officeopenxml.com/anatomyofOOXML-xlsx.php
-  // if (/^[a-z]+\:\/\//.test(path)) {
-  //   return path
-  // }
-  return 'xl/' + path
 }
 
 function createSheetNotFoundError(sheet, sheets) {
