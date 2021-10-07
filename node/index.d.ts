@@ -14,7 +14,7 @@ import {
 
 export function parseExcelDate(excelSerialDate: number) : typeof Date;
 
-export type Input = Stream | PathLike;
+type Input = Stream | PathLike;
 
 function readXlsxFile(input: Input, options: ParseWithSchemaOptions) : Promise<ParsedObjectsResult>;
 function readXlsxFile(input: Input, options: ParseWithMapOptions) : Promise<ParsedObjectsResult>;

@@ -1,6 +1,3 @@
-// See the discussion:
-// https://github.com/catamphetamine/read-excel-file/issues/71
-
 export function Integer(): void;
 export function URL(): void;
 export function Email(): void;
@@ -12,7 +9,7 @@ type BasicType =
 	| typeof Date
 	| Integer
 	| URL
-	| Email
+	| Email;
 
 export type Type = <T>(value: Cell) => T?;
 
