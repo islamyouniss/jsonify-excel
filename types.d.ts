@@ -44,7 +44,7 @@ export type Schema = Record<string, SchemaEntry>
 export interface Error {
 	error: string;
 	row: number;
-	column: number;
+	column: string;
 	value?: any;
 	type?: SchemaEntry;
 }
