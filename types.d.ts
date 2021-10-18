@@ -58,7 +58,7 @@ export interface ParsedObjectsResult<T extends object> {
 }
 
 export interface ParseWithSchemaOptions<T extends object> {
-	schema: Schema<T>;
+	schema: Schema;
 	transformData?: (rows: Row[]) => Row[];
 	sheet?: number | string;
 }
