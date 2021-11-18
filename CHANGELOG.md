@@ -1,8 +1,6 @@
 <!--
 6.0.0 / xx.xx.xxxx
 ==================
-
-  * Added [TypeScript](https://github.com/catamphetamine/read-excel-file/issues/71) definitions.
 -->
 
 5.2.22 / 11.11.2021
