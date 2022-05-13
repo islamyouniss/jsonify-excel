@@ -18,7 +18,7 @@
     "prepublishOnly": "npm-run-all build test browser-build"
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.7.0",
+    "@xmldom/xmldom": "^0.8.2",
     "jszip": "^3.7.1",
     "unzipper": "^0.10.11"
   },
