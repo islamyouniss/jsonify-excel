@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 describe('1904', () => {
 	it('should parse 1904 macOS dates', async () => {

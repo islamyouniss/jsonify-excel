@@ -1,4 +1,4 @@
-import parseExcel from '../source/read/readXlsxFileNode'
+import parseExcel from '../source/read/readXlsxFileNode.js'
 import assert from 'assert'
 
 function parseXlsx(path, sheet, callback) {

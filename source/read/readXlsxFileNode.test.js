@@ -1,6 +1,6 @@
 import path from 'path'
 
-import readXlsxFileNode from './readXlsxFileNode'
+import readXlsxFileNode from './readXlsxFileNode.js'
 
 describe('readXlsxFileNode', () => {
 	it('should read *.xlsx file on Node.js and parse it to JSON', () => {

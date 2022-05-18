@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 describe('string formula', () => {
 	it('should return <v/> of string cells having a formula', async () => {

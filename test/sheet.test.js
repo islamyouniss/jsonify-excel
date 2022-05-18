@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 describe('sheet', () => {
 	it('should read sheet by name (first)', async () => {

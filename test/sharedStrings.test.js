@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 describe('sharedStrings', () => {
 	it('should parse sharedStrings (in case of <r><t>) and not include "phonetic" <rPr/>', async () => {

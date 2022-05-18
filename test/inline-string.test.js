@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 describe('inline string', () => {
 	it('should parse inline strings', async () => {

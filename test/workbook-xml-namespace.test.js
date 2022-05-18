@@ -1,4 +1,4 @@
-import readXlsx from '../source/read/readXlsxFileNode'
+import readXlsx from '../source/read/readXlsxFileNode.js'
 
 // https://gitlab.com/catamphetamine/read-excel-file/-/issues/25
 describe('workbook.xml:namespace', () => {

@@ -1,6 +1,6 @@
 import path from 'path'
 
-import readSheetNamesNode from './readSheetNamesNode'
+import readSheetNamesNode from './readSheetNamesNode.js'
 
 describe('readSheetNamesNode', () => {
 	it('should read the list of sheet names in an *.xlsx file in Node.js', () => {
