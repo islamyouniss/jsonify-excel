@@ -3,7 +3,7 @@
   "version": "5.3.0",
   "description": "Read small to medium `*.xlsx` files in a browser or Node.js. Parse to JSON with a strict schema.",
   "module": "index.js",
-  "main": "index.commonjs.js",
+  "main": "index.cjs",
   "type": "module",
   "exports": {
     ".": {
@@ -36,7 +36,7 @@
     "build-commonjs-package.json": "node runnable/create-commonjs-package-json.js",
     "build-commonjs": "npm-run-all build-commonjs-modules build-commonjs-package.json",
     "build-es6-modules": "better-npm-run build-es6-modules",
-    "browser-build": "rollup --config rollup.config.js",
+    "browser-build": "rollup --config rollup.config.mjs",
     "build": "npm-run-all clean-for-build build-commonjs build-es6-modules browser-build",
     "prepublishOnly": "npm-run-all build test browser-build"
   },

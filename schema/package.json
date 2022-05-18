@@ -2,7 +2,7 @@
   "private": true,
   "name": "read-excel-file/schema",
   "version": "1.0.0",
-  "main": "index.commonjs.js",
+  "main": "index.cjs",
   "module": "index.js",
   "types": "./index.d.ts",
   "type": "module",
