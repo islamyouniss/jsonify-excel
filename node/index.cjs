@@ -1,8 +1,3 @@
-// This file is deprecated.
-// It's the same as `index.cjs`, just retains the old file name.
-// Someone might have imported this module as `read-excel-file/node/index.commonjs`.
-// https://gitlab.com/catamphetamine/read-excel-file/-/issues/3#note_896833610
-
 exports = module.exports = require('../commonjs/read/readXlsxFileNode.js').default
 exports['default'] = require('../commonjs/read/readXlsxFileNode.js').default
 exports.readSheetNames = require('../commonjs/read/readSheetNamesNode.js').default
