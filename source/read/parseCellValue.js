@@ -1,7 +1,5 @@
 import parseDate from './parseDate.js'
-
-// https://hexdocs.pm/xlsxir/number_styles.html
-const BUILT_IN_DATE_NUMBER_FORMAT_IDS = [14,15,16,17,18,19,20,21,22,27,30,36,45,46,47,50,57]
+import isDateTimestamp from './isDateTimestamp.js'
 
 // Parses a string `value` of a cell.
 export default function parseCellValue(value, type, {
@@ -166,53 +164,6 @@ function decodeError(errorCode) {
   }
 }
 
-function isDateTemplate(template) {
-  // Date format tokens could be in upper case or in lower case.
-  // There seems to be no single standard.
-  // So lowercase the template first.
-  template = template.toLowerCase()
-  const tokens = template.split(/\W+/)
-  for (const token of tokens) {
-    if (DATE_TEMPLATE_TOKENS.indexOf(token) < 0) {
-      return false
-    }
-  }
-  return true
-}
-
-// These tokens could be in upper case or in lower case.
-// There seems to be no single standard, so using lower case.
-const DATE_TEMPLATE_TOKENS = [
-  // Seconds (min two digits). Example: "05".
-  'ss',
-  // Minutes (min two digits). Example: "05". Could also be "Months". Weird.
-  'mm',
-  // Hours. Example: "1".
-  'h',
-  // Hours (min two digits). Example: "01".
-  'hh',
-  // "AM" part of "AM/PM". Lowercased just in case.
-  'am',
-  // "PM" part of "AM/PM". Lowercased just in case.
-  'pm',
-  // Day. Example: "1"
-  'd',
-  // Day (min two digits). Example: "01"
-  'dd',
-  // Month (numeric). Example: "1".
-  'm',
-  // Month (numeric, min two digits). Example: "01". Could also be "Minutes". Weird.
-  'mm',
-  // Month (shortened month name). Example: "Jan".
-  'mmm',
-  // Month (full month name). Example: "January".
-  'mmmm',
-  // Two-digit year. Example: "20".
-  'yy',
-  // Full year. Example: "2020".
-  'yyyy'
-];
-
 function parseString(value, options) {
   // In some weird cases, a developer might want to disable
   // the automatic trimming of all strings.
@@ -225,35 +176,4 @@ function parseString(value, options) {
     value = undefined
   }
   return value
-}
-
-// XLSX does have "d" type for dates, but it's not commonly used.
-// Instead, it prefers using "n" type for storing dates as timestamps.
-//
-// Whether a numeric value is a number or a date timestamp, it sometimes could be
-// detected by looking at the value "format" and seeing if it's a date-specific one.
-// https://github.com/catamphetamine/read-excel-file/issues/3#issuecomment-395770777
-//
-// The list of generic numeric value "formats":
-// https://xlsxwriter.readthedocs.io/format.html#format-set-num-format
-//
-function isDateTimestamp(value, styleId, styles, options) {
-  if (styleId) {
-    const style = styles[styleId]
-    if (!style) {
-      throw new Error(`Cell style not found: ${styleId}`)
-    }
-    if (
-      // Whether it's a "number format" that's conventionally used for storing date timestamps.
-      BUILT_IN_DATE_NUMBER_FORMAT_IDS.indexOf(parseInt(style.numberFormat.id)) >= 0 ||
-      // Whether it's a "number format" that uses a "formatting template"
-      // that the developer is certain is a date formatting template.
-      (options.dateFormat && style.numberFormat.template === options.dateFormat) ||
-      // Whether the "smart formatting template" feature is not disabled
-      // and it has detected that it's a date formatting template by looking at it.
-      (options.smartDateParser !== false && style.numberFormat.template && isDateTemplate(style.numberFormat.template))
-     ) {
-      return true
-    }
-  }
 }
