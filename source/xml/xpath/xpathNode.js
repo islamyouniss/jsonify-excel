@@ -1,4 +1,5 @@
-// The `xpath` dependency is about as large as `jszip`.
+// This file is no longer used.
+
 import xpath from 'xpath'
 
 export default function(document, node, path, namespaces = {}) {

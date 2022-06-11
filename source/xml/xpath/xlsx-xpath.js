@@ -1,3 +1,5 @@
+// This file is no longer used.
+
 // Turns out IE11 doesn't support XPath, so not using `./xpathBrowser` for browsers.
 // https://github.com/catamphetamine/read-excel-file/issues/26
 // The inclusion of `xpath` package in `./xpathNode`
