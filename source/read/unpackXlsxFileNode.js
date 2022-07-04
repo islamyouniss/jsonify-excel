@@ -38,7 +38,10 @@ export default function unpackXlsxFile(input) {
           // https://github.com/ZJONSSON/node-unzipper/issues/35
           // https://gitlab.com/catamphetamine/read-excel-file/-/issues/54
           //
-          // entry.setEncoding('utf8')
+          // If the `entry.setEncoding('utf8')` line would be commented out,
+          // there's a `nonAsciiCharacterEncoding` test that wouldn't pass.
+          //
+          entry.setEncoding('utf8')
           //
           entry
             .on('data', data => contents += data.toString())
