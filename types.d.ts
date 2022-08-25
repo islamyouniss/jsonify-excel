@@ -21,6 +21,8 @@ interface SchemaEntryBasic<T> {
 	validate?(value: T): void;
 }
 
+// Legacy versions of this library supported supplying a custom `parse()` function.
+// Since then, the `parse()` function has been renamed to `type()` function.
 interface SchemaEntryParsed<T> {
 	prop: string;
 	parse: (value: Cell) => T | undefined;
