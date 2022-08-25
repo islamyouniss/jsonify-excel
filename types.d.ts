@@ -15,7 +15,7 @@ export type Type = <T>(value: Cell) => T | undefined;
 
 interface SchemaEntryBasic<T> {
 	prop: string;
-	type?: BasicType | Type;
+	type?: BasicType | Type<T>;
 	oneOf?: T[];
 	required?: boolean;
 	validate?(value: T): void;
