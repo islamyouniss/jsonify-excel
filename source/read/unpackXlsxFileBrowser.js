@@ -6,7 +6,6 @@ import { unzipSync, strFromU8 } from 'fflate'
  * @return {Promise} Resolves to an object holding XLSX file entries.
  */
 export default function unpackXlsxFile(file) {
-	const startedAt = Date.now()
 	return file.arrayBuffer().then((fileBuffer) => {
 		const archive = new Uint8Array(fileBuffer)
 		const contents = unzipSync(archive)
