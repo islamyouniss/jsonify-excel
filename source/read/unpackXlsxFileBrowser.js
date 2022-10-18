@@ -2,23 +2,28 @@ import { unzipSync, strFromU8 } from 'fflate'
 
 /**
  * Reads XLSX file in a browser.
- * @param  {File} file - A `File` object being uploaded in the browser.
+ * @param  {(File|ArrayBuffer)} input - A `File` or an `ArrayBuffer`.
  * @return {Promise} Resolves to an object holding XLSX file entries.
  */
-export default function unpackXlsxFile(file) {
-	return file.arrayBuffer().then((fileBuffer) => {
-		const archive = new Uint8Array(fileBuffer)
-		const contents = unzipSync(archive)
-		return getContents(contents)
-		// return new Promise((resolve, reject) => {
-		// 	unzip(archive, (error, contents) => {
-		// 		if (error) {
-		// 			return reject(error)
-		// 		}
-		// 		return resolve(getContents(contents))
-		// 	})
-		// })
-	})
+export default function unpackXlsxFile(input) {
+	if (input instanceof File) {
+		return input.arrayBuffer().then(unpackXlsxArrayBuffer)
+	}
+	return unpackXlsxArrayBuffer(input)
+}
+
+function unpackXlsxArrayBuffer(arrayBuffer) {
+	const archive = new Uint8Array(arrayBuffer)
+	const contents = unzipSync(archive)
+	return getContents(contents)
+	// return new Promise((resolve, reject) => {
+	// 	unzip(archive, (error, contents) => {
+	// 		if (error) {
+	// 			return reject(error)
+	// 		}
+	// 		return resolve(getContents(contents))
+	// 	})
+	// })
 }
 
 function getContents(contents) {

@@ -25,13 +25,26 @@ If you're not using a bundler then use a [standalone version from a CDN](#cdn).
 ```js
 import readXlsxFile from 'read-excel-file'
 
+// File.
 const input = document.getElementById('input')
-
 input.addEventListener('change', () => {
   readXlsxFile(input.files[0]).then((rows) => {
     // `rows` is an array of rows
     // each row being an array of cells.
   })
+})
+
+// ArrayBuffer.
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer
+//
+// Could be obtained from:
+// * File
+// * Blob
+// * Base64 string
+//
+readXlsxFile(arrayBuffer).then((rows) => {
+  // `rows` is an array of rows
+  // each row being an array of cells.
 })
 ```
 
