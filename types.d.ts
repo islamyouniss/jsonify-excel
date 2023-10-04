@@ -65,6 +65,7 @@ export interface ParsedObjectsResult<T extends object> {
 interface ParseCommonOptions {
 	sheet?: number | string;
 	trim?: boolean;
+	parseNumber?: (string: string) => any;
 }
 
 export interface ParseWithSchemaOptions<T extends object> extends ParseCommonOptions {

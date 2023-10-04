@@ -438,6 +438,19 @@ By default, it automatically trims all string values. To disable this feature, p
 readXlsxFile(file, { trim: false })
 ```
 
+## Parse Numbers
+
+By default, it parses numeric cell values from strings. In some rare cases though, javascript's [inherently limited](https://www.youtube.com/watch?v=2gIxbTn7GSc) floating-point number precision might become an issue. An example might be finance and banking domain. To work around that, this library supports passing a custom `parseNumber(string)` function option.
+
+```js
+// Arbitrary-precision numbers in javascript.
+import Decimal from 'decimal.js'
+
+readXlsxFile(file, {
+  parseNumber: (string) => new Decimal(string)
+})
+```
+
 ## Transform
 
 Sometimes, a spreadsheet doesn't exactly have the structure required by this library's `schema` parsing feature: for example, it may be missing a header row, or contain some purely presentational / empty / "garbage" rows that should be removed. To fix that, one could pass an optional `transformData(data)` function that would modify the spreadsheet contents as required.
