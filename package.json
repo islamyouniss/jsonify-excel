@@ -26,6 +26,11 @@
       "import": "./schema/index.js",
       "require": "./schema/index.cjs"
     },
+    "./map": {
+      "types": "./map/index.d.ts",
+      "import": "./map/index.js",
+      "require": "./map/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
