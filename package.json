@@ -1,6 +1,6 @@
 {
-  "name": "@islamyouniss/jsonify-excel",
-  "version": "0.0.1",
+  "name": "@islamyounis/jsonify-excel",
+  "version": "0.0.2",
   "description": "Read excel files of moderate size in a web browser or on a server.",
   "module": "index.js",
   "main": "index.cjs",
@@ -88,7 +88,8 @@
     "url": "https://github.com/islamyouniss/jsonify-excel.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "keywords": [
     "excel",

@@ -60,28 +60,34 @@ describe('convertToJsonWithSchema', () => {
             rows: [
                 {
                     trainingType: {
+                        key: "trainingType",
                         value: "program",
                         errors: null
                     },
                     name: {
+                        key: "name",
                         value: "pro 1",
                         errors: null
                     },
                     category: {
+                        key: "category",
                         value: "leaders_learning",
                         errors: null
                     },
                     targetAudience: {
+                        key: "targetAudience",
                         value: "pro 1 TA",
                         errors: null
                     },
                     startDate: {
+                        key: "startDate",
                         value: null,
-                        errors: "required"
+                        errors: ["required"]
                     },
                     endDate: {
+                        key: "endDate",
                         value: null,
-                        errors: "required"
+                        errors: ["required"]
                     },
                 }
             ]

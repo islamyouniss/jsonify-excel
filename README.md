@@ -1,15 +1,13 @@
-# `@islamyouniss/jsonify-excel`
+# `@islamyounis/jsonify-excel`
 
 Read `*.xlsx` files of moderate size in a web browser or on a server.
 
 It also supports parsing spreadsheet rows into JSON objects using a [schema](#schema).
 
-[Demo](https://catamphetamine.gitlab.io/read-excel-file/)
-
 ## Install
 
 ```js
-npm install @islamyouniss/jsonify-excel --save
+npm install @islamyounis/jsonify-excel --save
 ```
 
 Alternatively, one could include it on a web page [directly](#cdn) via a `<script/>` tag.
@@ -25,7 +23,7 @@ Example 1: User chooses a file and the web application reads it.
 ```
 
 ```js
-import readXlsxFile from '@islamyouniss/jsonify-excel'
+import readXlsxFile from '@islamyounis/jsonify-excel'
 
 const input = document.getElementById('input')
 
@@ -61,7 +59,7 @@ Example 1: Read data from a file at file path.
 
 ```js
 // Import from '/node' subpackage.
-const readXlsxFile = require('@islamyouniss/jsonify-excel/node')
+const readXlsxFile = require('@islamyounis/jsonify-excel/node')
 
 // Read data from a file by file path.
 readXlsxFile('/path/to/file').then((rows) => {
@@ -126,7 +124,7 @@ input.addEventListener('change', () => {
 
 ```js
 // Import from '/web-worker' subpackage.
-import readXlsxFile from '@islamyouniss/jsonify-excel/web-worker'
+import readXlsxFile from '@islamyounis/jsonify-excel/web-worker'
 
 onmessage = function(event) {
   readXlsxFile(event.data).then((rows) => {
@@ -162,8 +160,8 @@ To get the names of all available sheets, use `readSheetNames()` function:
 
 ```js
 // Depending on where your code runs, import it from
-// '@islamyouniss/jsonify-excel' or '@islamyouniss/jsonify-excel/node' or '@islamyouniss/jsonify-excel/web-worker'.
-import { readSheetNames } from '@islamyouniss/jsonify-excel'
+// '@islamyounis/jsonify-excel' or '@islamyounis/jsonify-excel/node' or '@islamyounis/jsonify-excel/web-worker'.
+import { readSheetNames } from '@islamyounis/jsonify-excel'
 
 readSheetNames(file).then((sheetNames) => {
   // sheetNames === ['Sheet1', 'Sheet2']
@@ -405,7 +403,7 @@ readXlsxFile(file, {
 #####
 
 ```js
-import { parseExcelDate } from '@islamyouniss/jsonify-excel'
+import { parseExcelDate } from '@islamyounis/jsonify-excel'
 
 function ParseExcelFileErrors({ errors }) {
   return (
@@ -471,7 +469,7 @@ readXlsxFile(file, {
 To include this library directly via a `<script/>` tag on a page, one can use any npm CDN service, e.g. [unpkg.com](https://unpkg.com) or [jsdelivr.com](https://jsdelivr.com)
 
 ```html
-<script src="https://unpkg.com/jsonify-excel@6.x/bundle/jsonify-excel.min.js"></script>
+<script src="https://unpkg.com/@islamyounis/jsonify-excel@0.0.1/bundle/jsonify-excel.min.js"></script>
 
 <script>
   var input = document.getElementById('input')
