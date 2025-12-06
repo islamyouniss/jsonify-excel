@@ -1,5 +1,5 @@
 {
-  "name": "jsonify-excel",
+  "name": "@islamyouniss/jsonify-excel",
   "version": "0.0.1",
   "description": "Read excel files of moderate size in a web browser or on a server.",
   "module": "index.js",
@@ -85,7 +85,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/catamphetamine/read-excel-file"
+    "url": "https://github.com/islamyouniss/jsonify-excel.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "excel",

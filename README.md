@@ -1,4 +1,4 @@
-# `jsonify-excel`
+# `@islamyouniss/jsonify-excel`
 
 Read `*.xlsx` files of moderate size in a web browser or on a server.
 
@@ -9,7 +9,7 @@ It also supports parsing spreadsheet rows into JSON objects using a [schema](#sc
 ## Install
 
 ```js
-npm install jsonify-excel --save
+npm install @islamyouniss/jsonify-excel --save
 ```
 
 Alternatively, one could include it on a web page [directly](#cdn) via a `<script/>` tag.
@@ -25,7 +25,7 @@ Example 1: User chooses a file and the web application reads it.
 ```
 
 ```js
-import readXlsxFile from 'jsonify-excel'
+import readXlsxFile from '@islamyouniss/jsonify-excel'
 
 const input = document.getElementById('input')
 
@@ -61,7 +61,7 @@ Example 1: Read data from a file at file path.
 
 ```js
 // Import from '/node' subpackage.
-const readXlsxFile = require('jsonify-excel/node')
+const readXlsxFile = require('@islamyouniss/jsonify-excel/node')
 
 // Read data from a file by file path.
 readXlsxFile('/path/to/file').then((rows) => {
@@ -126,7 +126,7 @@ input.addEventListener('change', () => {
 
 ```js
 // Import from '/web-worker' subpackage.
-import readXlsxFile from 'jsonify-excel/web-worker'
+import readXlsxFile from '@islamyouniss/jsonify-excel/web-worker'
 
 onmessage = function(event) {
   readXlsxFile(event.data).then((rows) => {
@@ -162,8 +162,8 @@ To get the names of all available sheets, use `readSheetNames()` function:
 
 ```js
 // Depending on where your code runs, import it from
-// 'jsonify-excel' or 'jsonify-excel/node' or 'jsonify-excel/web-worker'.
-import { readSheetNames } from 'jsonify-excel'
+// '@islamyouniss/jsonify-excel' or '@islamyouniss/jsonify-excel/node' or '@islamyouniss/jsonify-excel/web-worker'.
+import { readSheetNames } from '@islamyouniss/jsonify-excel'
 
 readSheetNames(file).then((sheetNames) => {
   // sheetNames === ['Sheet1', 'Sheet2']
@@ -405,7 +405,7 @@ readXlsxFile(file, {
 #####
 
 ```js
-import { parseExcelDate } from 'jsonify-excel'
+import { parseExcelDate } from '@islamyouniss/jsonify-excel'
 
 function ParseExcelFileErrors({ errors }) {
   return (
