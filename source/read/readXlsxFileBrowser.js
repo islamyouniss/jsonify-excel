@@ -3,6 +3,8 @@ import xml from '../xml/xmlBrowser.js'
 import unpackXlsxFile from './unpackXlsxFileBrowser.js'
 import readXlsxFileContents from './readXlsxFileContents.js'
 
+import convertToJsonWithSchema from './schema/convertToJsonWithSchema.js'
+
 /**
  * Reads XLSX file into a 2D array of cells in a browser.
  * @param  {file} file - A file being uploaded in the browser.
@@ -14,3 +16,5 @@ export default function readXlsxFile(file, options = {}) {
 	return unpackXlsxFile(file)
 		.then((entries) => readXlsxFileContents(entries, xml, options))
 }
+
+readXlsxFile.convertToJsonWithSchema = convertToJsonWithSchema

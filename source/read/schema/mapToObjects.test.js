@@ -241,8 +241,7 @@ describe('mapToObjects', () => {
 		}])
 	})
 
-	it('should parse integers', () =>
-	{
+	it('should parse integers', () => {
 		const { rows, errors } = mapToObjects([
 			[
 				'INTEGER'
@@ -273,8 +272,7 @@ describe('mapToObjects', () => {
 		}, null])
 	})
 
-	it('should parse URLs', () =>
-	{
+	it('should parse URLs', () => {
 		const { rows, errors } = mapToObjects([
 			[
 				'URL'
@@ -300,8 +298,7 @@ describe('mapToObjects', () => {
 		}, null])
 	})
 
-	it('should parse Emails', () =>
-	{
+	it('should parse Emails', () => {
 		const { rows, errors } = mapToObjects([
 			[
 				'EMAIL'
@@ -595,7 +592,7 @@ describe('mapToObjects', () => {
 		}])
 	})
 
-	it('should not include `null` values by default', function() {
+	it('should not include `null` values by default', function () {
 		const { rows } = mapToObjects(
 			[
 				['A', 'B', 'CA', 'CB'],
@@ -613,7 +610,7 @@ describe('mapToObjects', () => {
 				},
 				c: {
 					column: 'C',
-    			schema: {
+					schema: {
 						a: {
 							column: 'CA',
 							type: String
@@ -1202,6 +1199,48 @@ describe('mapToObjects', () => {
 			column4: null,
 			column5: null
 		}])
+	})
+	it('should pass row and sheet to validate()', () => {
+		let rowArg
+		let sheetArg
+
+		const { rows, errors } = mapToObjects([
+			[
+				'START_DATE',
+				'END_DATE'
+			], [
+				'2018-03-24',
+				'2018-03-25'
+			]
+		], {
+			startDate: {
+				column: 'START_DATE',
+				type: String,
+				required: true
+			},
+			endDate: {
+				column: 'END_DATE',
+				type: String,
+				required: true,
+				validate: (value, row, sheet) => {
+					rowArg = row
+					sheetArg = sheet
+					if (row && row.startDate) {
+						if (value < row.startDate) {
+							throw new Error('End date must be after start date')
+						}
+					}
+				}
+			}
+		})
+
+		errors.should.deep.equal([])
+
+		// Verify row argument contains previously parsed fields
+		rowArg.should.deep.include({ startDate: '2018-03-24' })
+
+		// Verify sheet argument is the parsed rows so far (empty array when processing first row)
+		sheetArg.should.be.an('array')
 	})
 })
 

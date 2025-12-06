@@ -22,8 +22,8 @@ export default [
     ],
     output: {
       format: 'umd',
-      name: 'readXlsxFile',
-      file: 'bundle/read-excel-file.min.js',
+      name: 'jsonifyExcel',
+      file: 'bundle/jsonify-excel.min.js',
       sourcemap: true,
       globals: {
         // 'react': 'React',

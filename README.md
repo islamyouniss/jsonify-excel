@@ -1,4 +1,4 @@
-# `read-excel-file`
+# `jsonify-excel`
 
 Read `*.xlsx` files of moderate size in a web browser or on a server.
 
@@ -6,12 +6,10 @@ It also supports parsing spreadsheet rows into JSON objects using a [schema](#sc
 
 [Demo](https://catamphetamine.gitlab.io/read-excel-file/)
 
-Also check out [`write-excel-file`](https://www.npmjs.com/package/write-excel-file) for writing `*.xlsx` files.
-
 ## Install
 
 ```js
-npm install read-excel-file --save
+npm install jsonify-excel --save
 ```
 
 Alternatively, one could include it on a web page [directly](#cdn) via a `<script/>` tag.
@@ -27,7 +25,7 @@ Example 1: User chooses a file and the web application reads it.
 ```
 
 ```js
-import readXlsxFile from 'read-excel-file'
+import readXlsxFile from 'jsonify-excel'
 
 const input = document.getElementById('input')
 
@@ -63,7 +61,7 @@ Example 1: Read data from a file at file path.
 
 ```js
 // Import from '/node' subpackage.
-const readXlsxFile = require('read-excel-file/node')
+const readXlsxFile = require('jsonify-excel/node')
 
 // Read data from a file by file path.
 readXlsxFile('/path/to/file').then((rows) => {
@@ -128,7 +126,7 @@ input.addEventListener('change', () => {
 
 ```js
 // Import from '/web-worker' subpackage.
-import readXlsxFile from 'read-excel-file/web-worker'
+import readXlsxFile from 'jsonify-excel/web-worker'
 
 onmessage = function(event) {
   readXlsxFile(event.data).then((rows) => {
@@ -164,8 +162,8 @@ To get the names of all available sheets, use `readSheetNames()` function:
 
 ```js
 // Depending on where your code runs, import it from
-// 'read-excel-file' or 'read-exel-file/node' or 'read-excel-file/web-worker'.
-import { readSheetNames } from 'read-excel-file'
+// 'jsonify-excel' or 'jsonify-excel/node' or 'jsonify-excel/web-worker'.
+import { readSheetNames } from 'jsonify-excel'
 
 readSheetNames(file).then((sheetNames) => {
   // sheetNames === ['Sheet1', 'Sheet2']
@@ -188,7 +186,7 @@ readXlsxFile(file, { dateFormat: 'mm/dd/yyyy' })
 
 ## Numbers
 
-In `*.xlsx` files, numbers are stored as strings. `read-excel-file` manually parses such numeric cell values from strings to numbers. But there's an inherent issue with javascript numbers in general: their [floating-point precision](https://www.youtube.com/watch?v=2gIxbTn7GSc) might not be enough for applications that require 100% precision. An example would be finance and banking. To support such demanding use-cases, this library supports passing a custom `parseNumber(string)` function as an option.
+In `*.xlsx` files, numbers are stored as strings. `jsonify-excel` manually parses such numeric cell values from strings to numbers. But there's an inherent issue with javascript numbers in general: their [floating-point precision](https://www.youtube.com/watch?v=2gIxbTn7GSc) might not be enough for applications that require 100% precision. An example would be finance and banking. To support such demanding use-cases, this library supports passing a custom `parseNumber(string)` function as an option.
 
 Example: Use "decimals" to represent numbers with 100% precision in banking applications.
 
@@ -402,12 +400,12 @@ readXlsxFile(file, {
 -->
 
 <details>
-<summary>A <strong>React component for displaying errors</strong> that occured during schema parsing/validation.</summary>
+
 
 #####
 
 ```js
-import { parseExcelDate } from 'read-excel-file'
+import { parseExcelDate } from 'jsonify-excel'
 
 function ParseExcelFileErrors({ errors }) {
   return (
@@ -473,7 +471,7 @@ readXlsxFile(file, {
 To include this library directly via a `<script/>` tag on a page, one can use any npm CDN service, e.g. [unpkg.com](https://unpkg.com) or [jsdelivr.com](https://jsdelivr.com)
 
 ```html
-<script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+<script src="https://unpkg.com/jsonify-excel@6.x/bundle/jsonify-excel.min.js"></script>
 
 <script>
   var input = document.getElementById('input')
@@ -485,10 +483,6 @@ To include this library directly via a `<script/>` tag on a page, one can use an
   })
 </script>
 ```
-
-## GitHub
-
-On March 9th, 2020, GitHub, Inc. silently [banned](https://medium.com/@catamphetamine/how-github-blocked-me-and-all-my-libraries-c32c61f061d3) my account (erasing all my repos, issues and comments, even in my employer's private repos) without any notice or explanation. Because of that, all source codes had to be promptly moved to GitLab. The [GitHub repo](https://github.com/catamphetamine/read-excel-file) is now only used as a backup (you can star the repo there too), and the primary repo is now the [GitLab one](https://gitlab.com/catamphetamine/read-excel-file). Issues can be reported in any repo.
 
 ## License
 

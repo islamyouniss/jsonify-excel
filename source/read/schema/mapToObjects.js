@@ -74,8 +74,8 @@ export default function mapToObjects(data, schema, options) {
     data = transpose(data)
   }
 
-	if (ignoreEmptyRows) {
-		data = data.filter((row, i) => {
+  if (ignoreEmptyRows) {
+    data = data.filter((row, i) => {
       const isEmptyRow = row.every(cell => cell === null)
       if (isEmptyRow) {
         // Adjust `rowIndexSourceMap` now that the row has been removed.
@@ -87,7 +87,7 @@ export default function mapToObjects(data, schema, options) {
       }
       return true;
     })
-	}
+  }
 
   const columns = data[0]
 
@@ -95,7 +95,7 @@ export default function mapToObjects(data, schema, options) {
   const errors = []
 
   for (let i = 1; i < data.length; i++) {
-    const result = read(schema, data[i], i, undefined, columns, errors, schemaTransformOptions)
+    const result = read(schema, data[i], i, undefined, columns, errors, schemaTransformOptions, results)
     results.push(result)
   }
 
@@ -116,7 +116,7 @@ export default function mapToObjects(data, schema, options) {
   }
 }
 
-function read(schema, row, rowIndex, path, columns, errors, options) {
+function read(schema, row, rowIndex, path, columns, errors, options, sheet) {
   const object = {}
   let isEmptyObject = true
 
@@ -172,7 +172,7 @@ function read(schema, row, rowIndex, path, columns, errors, options) {
 
     // Get property `value` from cell value.
     if (schemaEntry.schema) {
-      value = read(schemaEntry.schema, row, rowIndex, propertyPath, columns, errors, options)
+      value = read(schemaEntry.schema, row, rowIndex, propertyPath, columns, errors, options, sheet)
     } else {
       if (isMissingColumn) {
         if ('schemaPropertyValueForMissingColumn' in options) {
@@ -196,7 +196,7 @@ function read(schema, row, rowIndex, path, columns, errors, options) {
           if (error) {
             return
           }
-          const result = parseValue(_value, schemaEntry, options)
+          const result = parseValue(_value, schemaEntry, options, object, sheet)
           if (result.error) {
             // In case of an error, `value` won't be returned and will just be reported
             // as part of an `error` object, so it's fine assigning just an element of the array.
@@ -211,7 +211,7 @@ function read(schema, row, rowIndex, path, columns, errors, options) {
           value = isEmpty ? options.getEmptyArrayValue(array, { path: propertyPath }) : array
         }
       } else {
-        const result = parseValue(cellValue, schemaEntry, options)
+        const result = parseValue(cellValue, schemaEntry, options, object, sheet)
         error = result.error
         reason = result.reason
         value = error ? cellValue : result.value
@@ -282,7 +282,7 @@ function read(schema, row, rowIndex, path, columns, errors, options) {
  * @param  {object} schemaEntry
  * @return {{ value: any, error: string }}
  */
-export function parseValue(value, schemaEntry, options) {
+export function parseValue(value, schemaEntry, options, row, sheet) {
   if (value === null) {
     return { value: null }
   }
@@ -314,7 +314,7 @@ export function parseValue(value, schemaEntry, options) {
     }
     if (schemaEntry.validate) {
       try {
-        schemaEntry.validate(result.value)
+        schemaEntry.validate(result.value, row, sheet)
       } catch (error) {
         return { error: error.message }
       }
