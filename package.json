@@ -93,7 +93,10 @@
     "browser",
     "json"
   ],
-  "author": "catamphetamine <purecatamphetamine@gmail.com>",
+  "author": "Islam Younis <islamyouniss90@gmail.com>",
+  "contributors": [
+    "catamphetamine <purecatamphetamine@gmail.com> (Original author of read-excel-file)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/islamyouniss/jsonify-excel/issues"

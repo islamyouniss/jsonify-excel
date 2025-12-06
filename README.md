@@ -484,6 +484,10 @@ To include this library directly via a `<script/>` tag on a page, one can use an
 </script>
 ```
 
+## Acknowledgments
+
+This project is a fork of [read-excel-file](https://gitlab.com/catamphetamine/read-excel-file) by [catamphetamine](https://gitlab.com/catamphetamine). Thank you for creating and maintaining the original library!
+
 ## License
 
 [MIT](LICENSE)
